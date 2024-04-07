@@ -1,0 +1,19 @@
+/*颜色相关*/
+:root {
+    --light-blue: #D0EFFF;
+    --semitransparent-light-blue: rgba(208, 239, 255, 0.3);
+    --base-blue: #7AB8F5;
+    --deep-blue: #4285F4;
+    --darker-blue: #005AB5;
+    --pure-white: #FFFFFF;
+    --off-white: #F9FAFB;
+    --soft-pink: #FFB6C1;
+    --soft-green: #7FFFD4;
+    --semitransparent-black: rgba(0, 0, 0, 0.1);
+    --light-grey: #E0E0E0;
+    --medium-grey: #9E9E9E;
+    --dark-grey: #616161;
+    --deep-green: #00FF00;
+    --draker-green: #008000;
+    --black: #000000;
+}

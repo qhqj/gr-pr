@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 数据填充到 HTML 示例</title>
+</head>
+<body>
+
+<div id="dataContainer">
+
+</div>
+<script src="../static/js/myUtil.js"></script>
+<script>
+    // 假设这是你的 JSON 数据
+    const jsonData = [
+        {name: "Alice", age: 25},
+        {name: "Bob", age: 30},
+        {name: "Charlie", age: 35}
+    ];
+
+    function gethtmlstr(data) {
+        return `
+        <div class="person">
+            <p>Name: ${data.name}</p>
+            <p>Age: ${data.age}</p>
+        </div>
+    `;
+    }
+
+    jsonData.forEach(item => {
+        appendHtmlToContainer(gethtmlstr(item), 'dataContainer');
+    });
+</script>
+</body>
+</html>

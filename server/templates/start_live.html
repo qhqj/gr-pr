@@ -1,0 +1,160 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="zh-CN">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>开始直播</title>-->
+<!--    <link rel="stylesheet" href="../static/css/live.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <h1>开始直播</h1>-->
+<!--    <label for="frameRateInput">帧率 (fps):</label>-->
+<!--    <input type="number" id="frameRateInput" min="1" max="60" value="30">-->
+<!--    <button id="startButton">开始</button>-->
+<!--    <div id="liveWindow">-->
+<!--        <div class="message">直播未开始，请点击“开始”按钮。</div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<script src="../static/js/myUtil.js"></script>-->
+<!--<script type="module">-->
+<!--    document.addEventListener('DOMContentLoaded', () => {-->
+<!--        const startButton = document.getElementById('startButton');-->
+<!--        const frameRateInput = document.getElementById('frameRateInput');-->
+<!--        const liveWindow = document.getElementById('liveWindow');-->
+<!--        const socket = io.connect(`http://${location.hostname}:${location.port}/start_live`);-->
+<!--        let frameRate = parseInt(frameRateInput.value);-->
+
+<!--        socket.on('my live', (data) => {-->
+<!--            if (data) {-->
+<!--                liveWindow.innerHTML = `<img src="${data}" alt="Live Stream">`;-->
+<!--            } else {-->
+<!--                liveWindow.innerHTML = '<div class="message">直播未开始，请点击“开始”按钮。</div>';-->
+<!--            }-->
+<!--        });-->
+
+<!--        startButton.addEventListener('click', async () => {-->
+<!--            try {-->
+<!--                const stream = await navigator.mediaDevices.getDisplayMedia({video: true});-->
+<!--                const videoTrack = stream.getVideoTracks()[0];-->
+<!--                const imageCapture = new ImageCapture(videoTrack);-->
+
+<!--                const sendFrame = async () => {-->
+<!--                    try {-->
+<!--                        const imageBitmap = await imageCapture.grabFrame();-->
+<!--                        const canvas = document.createElement('canvas');-->
+<!--                        canvas.width = imageBitmap.width;-->
+<!--                        canvas.height = imageBitmap.height;-->
+<!--                        const context = canvas.getContext('2d');-->
+<!--                        context.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);-->
+<!--                        const data = canvas.toDataURL('image/jpeg');-->
+<!--                        console.log('Sending data: ', data);-->
+<!--                        socket.emit('my event', data);-->
+<!--                        setTimeout(sendFrame, 1000 / frameRate);-->
+<!--                    } catch (error) {-->
+<!--                        console.error('Error grabbing frame:', error);-->
+<!--                    }-->
+<!--                };-->
+
+<!--                sendFrame();-->
+<!--            } catch (error) {-->
+<!--                console.error('Error getting display media:', error);-->
+<!--            }-->
+<!--        });-->
+
+<!--        frameRateInput.addEventListener('change', () => {-->
+<!--            frameRate = parseInt(frameRateInput.value);-->
+<!--        });-->
+<!--    });-->
+<!--    refreshLoginStatus();-->
+<!--    // 每5分钟调用一次-->
+<!--    setInterval(refreshLoginStatus, 300000);-->
+<!--</script>-->
+<!--<script src="../static/js/socket.io.min.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>开始直播</title>
+    <link rel="stylesheet" href="../static/css/live.css">
+</head>
+<body>
+<div class="container">
+    <h1>开始直播</h1>
+    <label for="frameRateInput">帧率 (fps):</label>
+    <input type="number" id="frameRateInput" min="1" max="60" value="30">
+    <label for="resolutionSelect">分辨率:</label>
+    <select id="resolutionSelect">
+        <option value="1280x720">1280x720</option>
+        <option value="1920x1080">1920x1080</option>
+        <!-- 添加更多分辨率选项 -->
+    </select>
+    <button id="startButton">开始</button>
+    <div id="liveWindow">
+        <div class="message">直播未开始，请点击“开始”按钮。</div>
+    </div>
+</div>
+<script src="../static/js/myUtil.js"></script>
+<script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+        const startButton = document.getElementById('startButton');
+        const frameRateInput = document.getElementById('frameRateInput');
+        const resolutionSelect = document.getElementById('resolutionSelect');
+        const liveWindow = document.getElementById('liveWindow');
+        const socket = io.connect(`http://${location.hostname}:${location.port}/start_live`);
+        let frameRate = parseInt(frameRateInput.value);
+        let resolution = resolutionSelect.value.split('x').map(value => parseInt(value));
+
+        socket.on('my live', (data) => {
+            if (data) {
+                liveWindow.innerHTML = `<img src="${data}" alt="Live Stream">`;
+            } else {
+                liveWindow.innerHTML = '<div class="message">直播未开始，请点击“开始”按钮。</div>';
+            }
+        });
+
+        startButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({video: true});
+                const videoTrack = stream.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(videoTrack);
+
+                const sendFrame = async () => {
+                    try {
+                        const imageBitmap = await imageCapture.grabFrame();
+                        const canvas = document.createElement('canvas');
+                        canvas.width = resolution[0];
+                        canvas.height = resolution[1];
+                        const context = canvas.getContext('2d');
+                        context.drawImage(imageBitmap, 0, 0, resolution[0], resolution[1]);
+                        const compressedData = canvas.toDataURL('image/jpeg', 0.7); // Adjust quality as needed
+                        console.log('Sending compressed data: ', compressedData);
+                        socket.emit('my event', compressedData);
+                        setTimeout(sendFrame, 1000 / frameRate);
+                    } catch (error) {
+                        console.error('Error grabbing frame:', error);
+                    }
+                };
+
+                sendFrame();
+            } catch (error) {
+                console.error('Error getting display media:', error);
+            }
+        });
+
+        frameRateInput.addEventListener('change', () => {
+            frameRate = parseInt(frameRateInput.value);
+        });
+
+        resolutionSelect.addEventListener('change', () => {
+            resolution = resolutionSelect.value.split('x').map(value => parseInt(value));
+        });
+    });
+    refreshLoginStatus();
+    // 每5分钟调用一次
+    setInterval(refreshLoginStatus, 300000);
+</script>
+<script src="../static/js/socket.io.min.js"></script>
+</body>
+</html>

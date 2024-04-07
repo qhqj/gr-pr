@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索好友</title>
+    <link rel="stylesheet" href="../static/css/style-manager.css">
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header">添加好友</h1>
+    <div class="input-group">
+        <label for="search">搜索好友(昵称、电话号码)：</label>
+        <input type="text" id="search" name="search">
+    </div>
+    <button class="button" id="searchButton">搜索</button>
+    <div class="friend-search" id="friend-search">
+        <!--此处填充-->
+    </div>
+
+    <h2 class="header">好友列表</h2>
+    <div class="friend-request-list" id="friend-request-list">
+        <!--此处填充-->
+    </div>
+</div>
+<script src="../static/js/myUtil.js"></script>
+<script>
+
+    searchFriendRequestInit();
+
+    function parsingJsonData(data, method) {
+        let buttonText;
+        let buttonDisabled = "";
+        let lestButtonDisabled = "";
+
+        switch (data.status) {
+            case 'pending':
+                buttonText = "等待中";
+                buttonDisabled = "disabled";
+                break;
+            case 'accepted':
+                buttonText = "已接受";
+                buttonDisabled = "disabled";
+                break;
+            case 'declined':
+                buttonText = "已拒绝";
+                buttonDisabled = "disabled";
+                break;
+            case 'blocked':
+                buttonText = "已屏蔽";
+                buttonDisabled = "disabled";
+                break;
+            default:
+                buttonText = "添加好友";
+                break;
+        }
+
+        if (method === 'search') {
+            return `
+                <div class="friend-search-result">
+                    <p>用户名: ${data.username}</p>
+                    <div class="button-side">
+                        <button class="add-friend-button" onclick="addFriend('${data.username}')" ${buttonDisabled}>${buttonText}</button>
+                    </div>
+                </div>
+    `;
+        } else if (method === 'request-list') {
+            if (!data.is_accepter) {
+                lestButtonDisabled = "disabled";
+            }
+            return `
+                <div class="friend-search-result">
+                    <p>用户名: ${data.username}</p>
+                    <p>状态: ${buttonText}</p>
+                    <div class="button-side">
+                        <button class="add-friend-button" onclick="changeFriendStatus('${data.username}','accepted')" ${data.status === 'accepted' ? "disabled" : lestButtonDisabled}>接受</button>
+                        <button class="add-friend-button" onclick="changeFriendStatus('${data.username}','declined')" ${data.status === 'declined' ? "disabled" : lestButtonDisabled}>拒绝</button>
+                        <button class="add-friend-button" onclick="changeFriendStatus('${data.username}','delete')" ${data.status === 'blocked' ? "disabled" : lestButtonDisabled}>删除</button>
+                    </div>
+                </div>
+    `;
+        }
+    }
+
+    function changeFriendStatus(username, action) {
+        console.log(username, action)
+        // 构造请求json:
+        const requestData = {
+            "username": getUsername(),
+            "session_id": getSessionId(),
+            "friend_name": username,
+            "action": action
+        }
+        myFetchApi('/change_friend', 'POST', requestData)
+            .then(data => {
+                alert("操作成功！")
+                searchFriendRequestInit();
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+
+    }
+
+    function searchAndUpdate(searchText) {
+        const searchData = {
+            "username": getUsername(),
+            "session_id": getSessionId(),
+            "search_input": searchText
+        };
+
+        myFetchApi('/search_friend', 'POST', searchData)
+            .then(data => {
+                //成功后的处理
+                document.getElementById("friend-search").innerHTML = ""; // 清空friend-search列表
+                if (data.length !== 0) {
+                    data.forEach(item => {
+                        appendHtmlToContainer(parsingJsonData(item, 'search'), 'friend-search');
+                    });
+                } else {
+                    appendHtmlToContainer(`<p>未找到用户</p>`, 'friend-search');
+                }
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+    document.getElementById("searchButton").addEventListener("click", function () {
+        const searchText = document.getElementById("search").value;
+        if (searchText === "") {
+            alert("请输入搜索内容");
+            return;
+        }
+        searchAndUpdate(searchText);
+    });
+
+    function addFriend(username) {
+        console.log("添加好友：" + username);
+        const addFriendData = {
+            "sender_name": getUsername(),
+            "session_id": getSessionId(),
+            "receiver_name": username
+        }
+        myFetchApi('send_friend_request', 'POST', addFriendData)
+            .then(data => {
+                alert('已发送好友请求');
+                if (document.getElementById("search").value !== "") {
+                    searchAndUpdate(document.getElementById("search").value);
+                } else {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+
+    function searchFriendRequestInit() {
+        const searchFriendRequestInitData = {
+            "username": getUsername(),
+            "session_id": getSessionId(),
+            "method": "init"
+        }
+        myFetchApi('/search_friend_request', 'POST', searchFriendRequestInitData)
+            .then(data => {
+                document.getElementById("friend-request-list").innerHTML = ""; // 清空friend-request-list列表
+                if (data.length !== 0) {
+                    data.forEach(item => {
+                        appendHtmlToContainer(parsingJsonData(item, 'request-list'), 'friend-request-list');
+                    });
+                }
+
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+</script>
+</body>
+</html>

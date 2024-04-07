@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在下载</title>
+    <style>
+        :root {
+            --light-blue: #D0EFFF;
+            --deep-blue: #4285F4;
+            --off-white: #F9FAFB;
+            --dark-grey: #616161;
+            --soft-pink: #FFB6C1;
+            --darker-blue: #005AB5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark-grey);
+            background-color: var(--off-white);
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .message {
+            background-color: var(--light-blue);
+            color: var(--deep-blue);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: auto;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--soft-pink);
+            font-size: 24px;
+            cursor: pointer; /* 添加鼠标指针样式 */
+        }
+
+        a:hover {
+            color: var(--darker-blue); /* 鼠标悬停时改变颜色 */
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="message">
+    <p>您的下载将在几秒钟内开始...</p>
+    <p>如果下载没有自动开始，请点击 <a href="#" onclick="downloadFile()">这里</a>。</p>
+</div>
+
+<script>
+    const currentURL = window.location.href;
+    const urlParts = currentURL.split('/');
+    const file_id = urlParts[urlParts.length - 1];
+    const downloadUrl = '/download_file/' + file_id;
+
+    // 使用fetch API异步下载文件
+    function downloadFile() {
+        fetch(downloadUrl)
+            .then(response => {
+                const encodedFilename = response.headers.get('X-Filename');
+                const filename = decodeURIComponent(encodedFilename);
+                return response.blob().then(blob => ({
+                    blob,
+                    filename
+                }));
+            })
+            .then(({
+                       blob,
+                       filename
+                   }) => {
+                // 使用获取到的文件名创建下载链接
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = filename; // 使用后端指定的文件名
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            })
+            .catch(error => console.error('下载文件出错:', error));
+    }
+
+    // 窗口加载时执行下载
+    window.addEventListener('load', () => {
+        downloadFile();
+    });
+</script>
+
+</body>
+
+</html>

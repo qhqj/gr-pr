@@ -1,0 +1,364 @@
+/*聊天界面相关css*/
+
+@import "colors.css";
+
+/* 通用样式 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding-left: 20px;
+}
+
+.bubble a {
+    text-decoration: none;
+    color: var(--deep-blue);
+    font-style: italic;
+}
+
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/*侧边栏*/
+.sidebar {
+    min-width: 200px;
+    max-width: 400px;
+    width: 250px;
+    background-color: var(--off-white);
+    overflow: hidden;
+    position: relative;
+}
+
+/*拖动效果展示*/
+.sidebar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -5px;
+    bottom: 0;
+    width: 10px;
+    cursor: ew-resize;
+}
+
+.link-to-home a {
+    text-decoration: none;
+    color: var(--deep-blue);
+    transition: color 0.3s;
+}
+
+.link-to-home a:hover {
+    color: var(--base-blue); /* 鼠标悬停时文字颜色 */
+}
+
+.link-to-home h2 {
+    padding: 20px;
+    font-size: 26px; /* 标题字体大小 */
+}
+
+
+.sidebar:hover::after {
+    background-color: var(--semitransparent-black);
+}
+
+.sidebar-content {
+    padding: 10px;
+}
+
+.sidebar-header {
+    background-color: var(--off-white);
+    padding: 10px;
+}
+
+.contacts a {
+    text-decoration: none;
+    color: inherit;
+
+}
+
+.groups a {
+    text-decoration: none;
+
+    color: inherit;
+
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background: var(--semitransparent-light-blue);
+
+}
+
+.list-item a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+
+}
+
+.avatar {
+    margin-right: 10px;
+
+}
+
+.avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.info {
+    flex-grow: 1;
+}
+
+.info h4 {
+    margin: 0;
+}
+
+.info span {
+    color: var(--medium-grey);
+    font-size: 14px;
+}
+
+
+a:only-child span.unread-message {
+    color: var(--soft-pink);
+    font-weight: bold;
+}
+
+.chat-selection-message {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    height: 200px; /* 设置高度 */
+}
+
+.chat-selection-message h1 {
+    color: var(--deep-blue);
+    font-size: 26px;
+    text-align: center;
+}
+
+
+.chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--pure-white);
+}
+
+.chat-header {
+    background-color: var(--off-white);
+    padding: 10px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+
+.message {
+    margin-bottom: 20px;
+}
+
+.message-info {
+    display: flex;
+    align-items: flex-start;
+}
+
+.avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.message-content {
+    max-width: 40%;
+}
+
+.sender {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.bubble {
+    background-color: var(--light-blue);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+.bubble p {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.bubble img {
+    max-width: 100%;
+    height: auto;
+}
+
+.meta {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sent-at {
+    font-size: 12px;
+}
+
+.read-status {
+    font-size: 12px;
+    color: var(--medium-grey);
+}
+
+
+.sent-by-me .message-info {
+    flex-direction: row-reverse;
+
+}
+
+.sent-by-me .avatar {
+    margin-left: 10px;
+    margin-right: 0;
+}
+
+
+.chat-input {
+    padding: 10px;
+}
+
+
+.input-container {
+    border: 1px solid var(--light-grey);
+    border-radius: 20px;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--off-white);
+    display: flex;
+    align-items: center;
+}
+
+.input-container textarea {
+    height: 40px;
+    resize: none;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    outline: none;
+    background-color: transparent;
+    flex: 1;
+    margin-right: 10px;
+    transition: height 0.3s;
+    font-size: 16px;
+    min-height: 40px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+
+#description {
+    width: 100%; /* 设置输入框宽度为100% */
+    height: auto; /* 设置高度为自动，允许内容过多时自动调整高度 */
+    overflow-y: auto; /* 设置垂直方向上的内容过多时出现滚动条 */
+    white-space: pre-wrap; /* 设置允许换行 */
+    padding: 10px; /* 设置内边距 */
+    border: 1px solid var(--dark-grey); /* 设置边框样式 */
+    border-radius: 5px; /* 设置边框圆角 */
+    box-sizing: border-box; /* 设置盒模型为边框盒模型 */
+}
+
+
+.input-container button {
+    width: 60px;
+    height: 40px;
+    background-color: var(--deep-blue);
+    color: var(--pure-white);
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+}
+
+.input-container button:hover {
+    background-color: var(--darker-blue);
+}
+
+
+.chat-upload {
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.chat-upload label {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: var(--deep-blue);
+    color: var(--pure-white);
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s;
+}
+
+.chat-upload label:hover {
+    background-color: var(--darker-blue);
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.read-status.unread {
+    font-size: 12px;
+    color: var(--soft-pink);
+    font-family: Arial, sans-serif;
+}
+
+.read-status.read {
+    font-size: 12px;
+    color: var(--soft-green);
+    font-family: Arial, sans-serif;
+}
+
+.file-message {
+    padding: 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: var(--pure-white);
+}
+
+.file-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--light-grey)
+}
+
+
+.file-icon {
+    margin-right: 10px;
+}
+
+.file-name {
+    font-weight: bold;
+}

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>群组管理系统</title>
+
+    <link rel="stylesheet" href="../static/css/style-manager.css">
+
+</head>
+<body>
+
+<div id="container">
+    <div id="group-list" class="sidebar">
+        <!-- JS动态填充群组列表 -->
+    </div>
+    <div id="management-panel">
+        <div id="group-info" class="container hidden">
+            <h1 class="header">管理群组</h1>
+            <form id="groupForm">
+                <div class="input-group">
+                    <label for="edit-name">群组名：</label>
+                    <input type="text" id="edit-name" name="name" required>
+                </div>
+                <div class="input-group">
+                    <label for="edit-description">群组描述：</label>
+                    <textarea id="edit-description" name="description" required rows="4"></textarea>
+                </div>
+                <button type="button" class="button" id="updateGroupButton">更新群组</button>
+            </form>
+
+            <!-- 群组成员列表 -->
+            <div class="input-group">
+                <h2>群组成员</h2>
+                <ul id="member-list">
+                    <!-- 成员列表项将在这里动态填充 -->
+                </ul>
+            </div>
+
+            <!-- 添加好友到群组 -->
+            <div class="input-group">
+                <h2>添加用户到群组</h2>
+                <label for="search-member">搜索用户：</label>
+                <input type="text" id="search-member" name="search-member">
+                <button class="button" id="search-btn">搜索</button>
+                <div id="search-results">
+                    <!-- 搜索结果将在这里动态填充 -->
+                </div>
+            </div>
+
+        </div>
+        <div id="select-group-prompt" class="container">
+            请选择左侧的群组进行管理
+        </div>
+    </div>
+
+</div>
+<script src="../static/js/myUtil.js"></script>
+<script>
+    function fetchGroupList() {
+        // 构造请求json
+        const reqData = {
+            "username": getUsername(),
+            "session_id": getSessionId()
+        }
+        // 发送请求
+        myFetchApi('/get_group_list', 'POST', reqData)
+            .then(data => {
+                updateGroupList(data)
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+    function fetchGroupMembers() {
+
+        // 构造请求数据
+        const reqData = {
+            "username": getUsername(),
+            "session_id": getSessionId(),
+            "groupId": getGroupId()
+        }
+        myFetchApi('/get_members_list', 'POST', reqData)
+            .then(data => {
+                fillMemberList(data);
+            })
+            .catch(error => {
+                console.log(error)
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+    // 更新群组信息的函数
+    function updateGroupInfo() {
+        //获取页面上的数据
+        const groupname = document.getElementById('edit-name').value;
+        const description = document.getElementById('edit-description').value;
+
+        const updateData = {
+            "username": getUsername(),
+            "session_id": getSessionId(),
+            "groupname": groupname,
+            "description": description,
+            "group_id": getGroupId()
+        }
+
+        myFetchApi('/update_group_info', 'POST', updateData)
+            .then(data => {
+                //成功后的处理
+                alert('群组信息更新成功');
+                //刷新页面
+                fetchGroupList();
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchGroupList(); // 初始化群组列表
+        const updateGroupButton = document.getElementById('updateGroupButton');
+        updateGroupButton.addEventListener('click', () => {
+            updateGroupInfo(); // 提交更新群组的信息
+        });
+        // 添加搜索按钮的点击事件
+        const searchBtn = document.getElementById('search-btn');
+        searchBtn.addEventListener('click', () => {
+            searchUsers();
+        });
+
+    });
+
+    // 更新群组列表的函数
+    function updateGroupList(groups) {
+        const groupListDiv = document.getElementById('group-list');
+        const groupInfoDiv = document.getElementById('group-info');
+        const selectGroupPrompt = document.getElementById('select-group-prompt');
+        const editNameInput = document.getElementById('edit-name');
+        const editDescriptionTextarea = document.getElementById('edit-description');
+
+        if (groups.length === 0) {
+            groupListDiv.innerHTML = '<div>没有可管理的群组</div>';
+        } else {
+            groupListDiv.innerHTML = ''; // 清空现有列表
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.textContent = group.name;
+                groupDiv.addEventListener('click', () => {
+                    localStorage.setItem('groupId', group.id);
+                    localStorage.setItem('groupname', group.name);
+                    groupInfoDiv.classList.remove('hidden');
+                    selectGroupPrompt.classList.add('hidden');
+                    editNameInput.value = group.name;
+                    editDescriptionTextarea.value = group.description;
+
+                    // 在选择群组后，获取群组成员列表
+                    fetchGroupMembers();
+                });
+                groupListDiv.appendChild(groupDiv);
+            });
+        }
+    }
+
+    // 填充群组成员列表的函数
+    function fillMemberList(members) {
+        const memberList = document.getElementById('member-list');
+        memberList.innerHTML = ''; // 清空列表
+        members.forEach((member, index) => {
+            const li = document.createElement('li');
+            li.className = 'member-item'; // 添加成员列表项的class
+            li.textContent = `${index + 1}. ${member.username}`;
+
+            if (!member.is_creator) { // 仅对非创建者用户显示删除按钮
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = '删除';
+                deleteButton.className = 'delete-button-member'; // 添加删除按钮的class
+                deleteButton.onclick = () => changeMember(member.username, "delete");
+
+                li.appendChild(deleteButton);
+            }
+            memberList.appendChild(li);
+        });
+    }
+
+
+    function changeMember(operand, action) {
+
+        console.log(operand)
+        // 构造请求
+        const removeData = {
+            "username": getUsername(),
+            "session_id": getSessionId(),
+            "operand": operand,
+            "action": action,
+            "group_id": getGroupId()
+
+        }
+        console.log(removeData)
+        myFetchApi('/change_member', 'POST', removeData)
+            .then(data => {
+                alert('操作成功');
+                // 刷新成员列表
+                fetchGroupMembers();
+                searchUsers();
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+    function searchUsers() {
+        const searchInput = document.getElementById('search-member').value;
+
+        const searchUsersData = {
+            "username": getUsername(),
+            "session_id": getSessionId(),
+            "group_id": getGroupId(),
+            "searchInput": searchInput
+
+        }
+        myFetchApi('/search_users_in_group', 'POST', searchUsersData)
+            .then(data => {
+                // 刷新成员列表
+                updateSearchUsers(data);
+            })
+            .catch(error => {
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+    function updateSearchUsers(searchResults) {
+        const searchResultsDiv = document.getElementById('search-results');
+        searchResultsDiv.innerHTML = '';
+
+        // 将搜索结果显示在页面上
+        searchResults.forEach(user => {
+            const userDiv = document.createElement('div');
+            userDiv.textContent = user.username;
+            userDiv.className = 'search-result';
+
+            // 添加邀请加入按钮
+            const inviteButton = document.createElement('button');
+            inviteButton.textContent = '邀请加入';
+            // 添加class
+            inviteButton.className = 'invite-button';
+
+            if (user.in_group) {
+                inviteButton.disabled = true; // 如果用户已在群组中，则禁用按钮
+                inviteButton.textContent = '已在群组中';
+            } else {
+                inviteButton.onclick = () => {
+                    changeMember(user.username, "add");
+
+                };
+            }
+
+            userDiv.appendChild(inviteButton);
+            searchResultsDiv.appendChild(userDiv);
+        });
+    }
+
+
+</script>
+</body>
+</html>
+

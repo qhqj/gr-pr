@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>直播观看页面</title>
+    <link rel="stylesheet" href="../static/css/live.css">
+</head>
+<body>
+<div class="container">
+    <h1>直播观看页面</h1>
+    <div class="stream-container" id="liveStream">
+        <div class="message">等待直播开始...</div>
+    </div>
+</div>
+<script src="../static/js/socket.io.min.js"></script>
+<script src="../static/js/myUtil.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const liveStream = document.getElementById('liveStream');
+        const socket = io.connect(`http://${location.hostname}:${location.port}/start_live`);
+
+        socket.on('my live', (data) => {
+            if (data) {
+                liveStream.innerHTML = `<img src="${data}" alt="Live Stream">`;
+            } else {
+                liveStream.innerHTML = '<div class="message">直播未开始，请稍后再试。</div>';
+            }
+        });
+    });
+
+    refreshLoginStatus();
+    // 每5分钟调用一次
+    setInterval(refreshLoginStatus, 300000);
+</script>
+</body>
+</html>

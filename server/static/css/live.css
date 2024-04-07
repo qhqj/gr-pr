@@ -1,0 +1,111 @@
+:root {
+    --light-blue: #D0EFFF;
+    --semitransparent-light-blue: rgba(208, 239, 255, 0.3);
+    --base-blue: #7AB8F5;
+    --deep-blue: #4285F4;
+    --darker-blue: #005AB5;
+    --pure-white: #FFFFFF;
+    --off-white: #F9FAFB;
+    --soft-pink: #FFB6C1;
+    --soft-green: #7FFFD4;
+    --deep-green: #00FF00;
+    --draker-green: #008000;
+    --semitransparent-black: rgba(0, 0, 0, 0.1);
+    --black: #000000;
+    --light-grey: #E0E0E0;
+    --medium-grey: #9E9E9E;
+    --dark-grey: #616161;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--pure-white);
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+#liveWindow {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 400px;
+    height: 300px;
+    border: 1px solid var(--light-grey);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#liveWindow img {
+    width: 100%;
+    height: 100%;
+}
+
+#liveWindow .message {
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    color: var(--dark-grey);
+}
+
+label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+input[type="number"] {
+    width: 60px;
+    font-size: 16px;
+    padding: 5px;
+}
+
+button {
+    font-size: 16px;
+    padding: 8px 16px;
+    background-color: var(--base-blue);
+    color: var(--pure-white);
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--deep-blue);
+}
+
+button:disabled {
+    background-color: var(--light-grey);
+    cursor: not-allowed;
+}
+
+.stream-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 720px;
+    border: 1px solid var(--light-grey);
+    background-color: var(--black);
+    overflow: hidden;
+}
+
+#liveStream img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.message {
+    font-size: 20px;
+    color: var(--pure-white);
+}

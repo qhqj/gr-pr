@@ -1,0 +1,45 @@
+@import url('colors.css');
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px auto; /* 将页面居中 */
+    max-width: 600px; /* 设置页面最大宽度 */
+}
+
+h1 {
+    color: var(--deep-blue);
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 20px; /* 添加底部间距 */
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.actions button {
+    background-color: var(--deep-blue);
+    color: var(--pure-white);
+    padding: 12px 24px; /* 增加按钮内边距 */
+    margin: 10px;
+    border: 2px solid var(--deep-blue); /* 添加边框 */
+    border-radius: 5px; /* 圆角 */
+    cursor: pointer;
+    transition: all 0.3s ease; /* 添加过渡效果 */
+}
+
+.actions button:hover {
+    background-color: var(--darker-blue);
+    border-color: var(--darker-blue); /* 修改边框颜色 */
+    color: var(--soft-green);
+}
+
+#username {
+    font-size: 24px; /* 设置字体大小 */
+    color: var(--dark-grey); /* 设置文字颜色 */
+    text-align: center; /* 文字居中 */
+    margin-top: 10px; /* 添加顶部间距 */
+}

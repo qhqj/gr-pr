@@ -1,6 +1,6 @@
 # gr-pr
 
-# 使用的是python 3.8，MySQL 8.0.34
+# 使用的是python 3.12，MySQL 8.0.34
 
 server/app.py是启动文件
 

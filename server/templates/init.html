@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>屏幕和音频录制</title>
+</head>
+
+<body>
+<div class="app">
+    <button class="start-btn">开始录制</button>
+    <button class="stop-btn" disabled>结束录制</button>
+    <select id="interval">
+        <option value="10000">10秒</option>
+        <option value="5000">5秒</option>
+        <option value="2000">2秒</option>
+    </select>
+    <select id="selectAudio">
+        <option value="inside">系统内放</option>
+        <option value="outside">麦克风</option>
+    </select>
+</div>
+
+<script src="../static/js/socket.io.min.js"></script>
+<script>
+    const startBtn = document.querySelector(".start-btn");
+    const stopBtn = document.querySelector(".stop-btn");
+    const intervalSelect = document.querySelector('#interval');
+    const socket = io('/start_live');
+
+    let liveStream; // 用于直播的流
+    let recordStream; // 用于录制的流
+
+    let liveRecorder;
+    let recordRecorder;
+
+    let intervalId;
+
+    async function getMedia() {
+        const selectedValue = document.getElementById('selectAudio').value;
+        try {
+            const audioStream = await navigator.mediaDevices.getUserMedia({audio: true});
+
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                    width: {ideal: 1280}, // 720p 分辨率的宽度
+                    height: {ideal: 720}  // 720p 分辨率的高度
+                },
+                audio: selectedValue === 'inside' // 是否包括系统音频
+            });
+
+            // 为直播和录制分别创建流
+            liveStream = new MediaStream([...screenStream.getTracks(), ...audioStream.getTracks()]);
+            recordStream = new MediaStream([...screenStream.getTracks(), ...audioStream.getTracks()]);
+
+            // 创建用于直播的 MediaRecorder
+            liveRecorder = new MediaRecorder(liveStream, {mimeType: 'video/webm; codecs=vp9,opus'});
+            liveRecorder.ondataavailable = e => {
+
+                if (e.data.size > 0) {
+                    sendDataViaSocket(e.data);
+                    console.log("直播数据已发送")
+                }
+            };
+
+            // 创建用于录制的 MediaRecorder
+            recordRecorder = new MediaRecorder(recordStream, {mimeType: 'video/webm; codecs=vp9,opus'});
+            recordRecorder.ondataavailable = e => {
+                if (e.data.size > 0) {
+                    sendToServer([e.data]);
+                }
+            };
+
+            startBtn.disabled = false;
+
+        } catch (error) {
+            console.error("授权失败！", error);
+        }
+    }
+
+    function sendDataViaSocket(data) {
+        data.arrayBuffer().then(arrayBuffer => {
+            const uint8Array = new Uint8Array(arrayBuffer);
+            socket.emit('live_data', uint8Array.buffer);
+        }).catch(error => console.error("转换Blob时出错：", error));
+    }
+
+    function startLive() {
+        if (liveRecorder && liveRecorder.state !== 'recording') {
+            liveRecorder.start(500); // 每X毫秒生成一次数据块
+            console.log("直播开始");
+        }
+    }
+
+
+    function startRecording() {
+        if (recordRecorder && recordRecorder.state !== 'recording') {
+            recordRecorder.start();
+            console.log("录制开始");
+        }
+    }
+
+    function stopRecording() {
+        if (recordRecorder && recordRecorder.state === "recording") {
+            recordRecorder.stop();
+            console.log("录制停止");
+        }
+    }
+
+    function sendToServer(chunks) {
+        const blob = new Blob(chunks, {type: "video/webm; codecs=vp9,opus"});
+        const formData = new FormData();
+        formData.append('video', blob);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            console.log("视频片段成功发送到服务器");
+        }).catch(error => {
+            console.error("发送过程中出现错误：", error);
+        });
+    }
+
+    startBtn.addEventListener('click', () => {
+        getMedia().then(() => {
+            startLive(); // 启动直播
+            startRecording(); // 启动录制
+
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+
+            intervalId = setInterval(() => {
+                stopRecording(); // 停止当前录制
+                startRecording(); // 启动新的录制
+            }, parseInt(intervalSelect.value));
+        });
+    });
+
+    function stopMediaStreams() {
+        if (liveStream) {
+            liveStream.getTracks().forEach(track => track.stop());
+        }
+        if (recordStream) {
+            recordStream.getTracks().forEach(track => track.stop());
+        }
+
+        liveStream = null;
+        recordStream = null;
+    }
+
+    stopBtn.addEventListener('click', () => {
+        clearInterval(intervalId);
+        stopRecording(); // 停止录制
+        stopMediaStreams(); // 停止媒体流
+
+        // 停止直播
+        if (liveRecorder && liveRecorder.state === 'recording') {
+            liveRecorder.stop();
+            console.log("直播结束");
+        }
+
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+    });
+</script>
+</body>
+
+</html>

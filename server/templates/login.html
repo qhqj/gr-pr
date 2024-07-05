@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+<div class="form-container">
+
+    <form method="POST" onsubmit="return submitForm(event)">
+
+        <h2>登录</h2>
+        <input type="text" placeholder="昵称或手机号" name="username_or_phone" required>
+        <input type="password" placeholder="密码，8-16位" name="password" id="passwordInput" required
+               data-password="显示密码">
+        <!--这里要新增一个输入框，默认值填123456，作为和服务器密钥协商的密钥-->
+        <input type="text" placeholder="加密密码，默认：123456" name="default_value" id="default_valueInput"
+               value="123456" required>
+        <button type="submit">登录</button>
+        <p>没有账号？<a href="register">注册</a></p>
+    </form>
+</div>
+<script src="../static/js/myUtil.js"></script>
+<script>
+    // 切换密码的显示状态
+    togglePasswordVisibility('passwordInput');
+
+    function checkForm() {
+        const username_or_phone = document.getElementsByName('username_or_phone')[0].value;
+        const password = document.getElementsByName('password')[0].value;
+        const key = document.getElementsByName('default_value')[0].value;
+        if (username_or_phone.length === 0 || password.length === 0) {
+            alert('请输入用户名和密码');
+            return false;
+        }
+        return {
+            username_or_phone: username_or_phone,
+            password: password,
+            key: key
+        };
+    }
+
+
+    function submitForm(event) {
+        event.preventDefault();
+        const formData = checkForm();
+        myFetchApi('/login', 'POST', formData)
+            .then(data => {
+                // 登录成功后的处理
+                localStorage.setItem('session_id', data.session_id);
+                console.log('session_id:', data.session_id);
+                localStorage.setItem('username', data.username);
+                console.log('username:', data.username);
+                //这里新增存储加密密钥(编码后的字符串)
+                localStorage.setItem('key', data.key);
+                console.log('登录成功', data);
+                window.location.href = '/home';
+            })
+            .catch(error => {
+                console.log("发生错误", error);
+                myHandleErrorCode(error.errorCode);
+            });
+    }
+
+</script>
+</body>
+</html>
+

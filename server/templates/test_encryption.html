@@ -1,0 +1,172 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>AES 加解密测试</title>-->
+<!--    <style>-->
+<!--        /* CSS 样式 */-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            background-color: #f2f2f2;-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            height: 100vh;-->
+<!--        }-->
+
+<!--        .container {-->
+<!--            background-color: white;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 8px;-->
+<!--            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);-->
+<!--            width: 400px;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        h2 {-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        .input-group {-->
+<!--            margin-bottom: 10px;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--        }-->
+
+<!--        .input-group input {-->
+<!--            width: calc(100% - 100px);-->
+<!--            padding: 10px;-->
+<!--            border: 1px solid #ccc;-->
+<!--            border-radius: 4px;-->
+<!--        }-->
+
+<!--        .input-group button {-->
+<!--            width: 80px;-->
+<!--            padding: 10px;-->
+<!--            border: none;-->
+<!--            border-radius: 4px;-->
+<!--            background-color: #007bff;-->
+<!--            color: white;-->
+<!--            cursor: pointer;-->
+<!--            margin-left: 10px;-->
+<!--        }-->
+
+<!--        .input-group button:hover {-->
+<!--            background-color: #0056b3;-->
+<!--        }-->
+
+<!--        #output {-->
+<!--            text-align: left;-->
+<!--            margin-top: 20px;-->
+<!--            border-top: 1px solid #ccc;-->
+<!--            padding-top: 10px;-->
+<!--        }-->
+
+<!--        #output span {-->
+<!--            display: block;-->
+<!--            margin-bottom: 5px;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        #output div {-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <h2>AES 加解密测试</h2>-->
+
+<!--    <div class="input-group">-->
+<!--        <input type="text" id="plaintext_input" placeholder="请输入要加密的内容">-->
+<!--        <button id="encrypt_btn">加密</button>-->
+<!--    </div>-->
+
+<!--    <div class="input-group">-->
+<!--        <input type="text" id="generate_key_input" placeholder="请输入用于生成密钥的内容">-->
+<!--        <button id="generate_key_btn">生成密钥</button>-->
+<!--    </div>-->
+
+<!--    <div class="input-group">-->
+<!--        <input type="text" id="ciphertext_input" placeholder="请输入要解密的密文">-->
+<!--        <button id="decrypt_btn">解密</button>-->
+<!--    </div>-->
+
+<!--    <div class="input-group">-->
+<!--        <input type="text" id="key_input" placeholder="请输入密钥">-->
+<!--    </div>-->
+
+<!--    <div id="output">-->
+<!--        <span>加密结果：</span>-->
+<!--        <div id="ciphertext_output"></div>-->
+
+<!--        <span>解密结果：</span>-->
+<!--        <div id="decrypted_output"></div>-->
+
+<!--        <span>Base64 密钥：</span>-->
+<!--        <div id="key_output"></div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<script src="../static/js/myUtil.js"></script>-->
+<!--<script>-->
+
+
+<!--    function binaryToBase64(binaryKey) {-->
+<!--        const keyArray = new Uint8Array(binaryKey);-->
+<!--        const keyString = String.fromCharCode.apply(null, keyArray);-->
+<!--        return window.btoa(keyString);-->
+<!--    }-->
+
+<!--    // 根据输入的字符串生成 SHA-256 哈希并转换为 Base64 编码-->
+<!--    async function generateKey(inputString) {-->
+<!--        const encoder = new TextEncoder();-->
+<!--        const data = encoder.encode(inputString);-->
+<!--        const hashBuffer = await crypto.subtle.digest('SHA-256', data);-->
+<!--        return binaryToBase64(new Uint8Array(hashBuffer));-->
+<!--    }-->
+
+<!--    // 添加按钮事件监听器-->
+<!--    document.getElementById('encrypt_btn').addEventListener('click', async () => {-->
+<!--        const plaintext = document.getElementById('plaintext_input').value;-->
+<!--        const key = document.getElementById('key_input').value;-->
+
+<!--        try {-->
+<!--            const encryptedText = await encryptString(plaintext, key);-->
+<!--            document.getElementById('ciphertext_output').textContent = encryptedText;-->
+<!--        } catch (error) {-->
+<!--            alert('加密失败：' + error);-->
+<!--        }-->
+<!--    });-->
+
+<!--    document.getElementById('decrypt_btn').addEventListener('click', async () => {-->
+<!--        const encryptedText = document.getElementById('ciphertext_input').value;-->
+<!--        const key = document.getElementById('key_input').value;-->
+
+<!--        try {-->
+<!--            const decryptedText = await decryptString(encryptedText, key);-->
+<!--            document.getElementById('decrypted_output').textContent = decryptedText;-->
+<!--        } catch (error) {-->
+<!--            alert('解密失败：' + error);-->
+<!--        }-->
+<!--    });-->
+
+<!--    document.getElementById('generate_key_btn').addEventListener('click', async () => {-->
+<!--        const inputString = document.getElementById('generate_key_input').value;-->
+
+<!--        try {-->
+<!--            const base64Key = await generateKey(inputString);-->
+<!--            document.getElementById('key_output').textContent = base64Key;-->
+<!--        } catch (error) {-->
+<!--            alert('生成密钥失败：' + error);-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+
+<!--</html>-->

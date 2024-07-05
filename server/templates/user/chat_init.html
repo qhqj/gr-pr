@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天界面</title>
+    <link rel="stylesheet" href="../../static/css/style-chat.css">
+</head>
+
+<body>
+<div class="container">
+
+    <div class="sidebar" id="sidebar">
+        <div class="link-to-home">
+            <a href="/home">
+                <h2>主页</h2>
+            </a>
+        </div>
+        <div class="sidebar-header">
+            <h2>联系人</h2>
+        </div>
+        <div class="sidebar-content">
+            <!-- 侧边栏联系人列表 -->
+            <div class="group">
+                <h3 class="group-header">好友</h3>
+                <ul class="contacts">
+                    <!-- 填充具体联系人 -->
+                </ul>
+            </div>
+            <div class="group">
+                <h3 class="group-header">群组</h3>
+                <ul class="groups">
+                    <!-- 填充具体群组 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--    显示提示选择联系人或者群组的信息-->
+    <div class="chat">
+        <div class="chat-selection-message">
+            <h1>请选择好友或者群组进行聊天</h1>
+        </div>
+
+    </div>
+</div>
+
+
+<!--获取用户名-->
+<script src="../../static/js/myUtil.js"></script>
+<!--&lt;!&ndash;显示消息&ndash;&gt;-->
+<!--<script src="../../static/js/showmessage.js"></script>-->
+
+
+<!--填充联系人-->
+<!--<script src="../../static/js/fillcontacts.js"></script>-->
+<!--&lt;!&ndash;输入框自动增高&ndash;&gt;-->
+<!--<script src="../../static/js/inputarea.js"></script>-->
+<!--&lt;!&ndash;发送消息&ndash;&gt;-->
+<!--<script src="../../static/js/sendmessage.js"></script>-->
+<!--&lt;!&ndash;上传文件&ndash;&gt;-->
+<!--<script src="../../static/js/uploadfile.js"></script>-->
+<!--拖动侧边栏-->
+<script src="../../static/js/dragsidebar.js"></script>
+<script src="../../static/js/myChat.js"></script>
+<script>
+    showUserList();
+</script>
+
+
+</body>
+</html>

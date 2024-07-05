@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/style-manager.css">
+    <title>创建群组</title>
+</head>
+<body>
+<div class="container">
+    <h1 class="header">创建群组</h1>
+    <form id="groupForm" onsubmit="createGroup(event)">
+        <div class="input-group">
+            <label for="name">群组名：</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="input-group">
+            <label for="description">群组描述：</label>
+            <textarea id="description" name="description" required rows="4"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="is_department">是否为部门：</label>
+            <select id="is_department" name="is_department">
+                <option value="true">是</option>
+                <option value="false" selected>否</option>
+            </select>
+        </div>
+        <button type="button" class="button" id="checkButton">检查群组名</button>
+        <button type="submit" class="button" id="createGroupButton" disabled>创建群组</button>
+    </form>
+</div>
+
+<script src="../static/js/myUtil.js"></script>
+
+<script>
+
+    const checkButton = document.getElementById("checkButton");
+    const createGroupButton = document.getElementById("createGroupButton");
+
+
+    checkButton.addEventListener("click", checkGroupName);
+    createGroupButton.addEventListener("click", createGroup);
+
+    function checkGroupName() {
+        const groupName = document.getElementById('name').value;
+        console.log(groupName);
+        if (!groupName) {
+            alert('请输入群组名！');
+            return;
+        }
+        const groupCheckObject = {
+            group_name: groupName,
+            username: getUsername(),
+            session_id: getSessionId()
+        };
+        myFetchApi('/check_group_name', 'POST', groupCheckObject)
+            .then(data => {
+                //设置创建按钮为可用
+                createGroupButton.disabled = false;
+            })
+            .catch(error => {
+                myHandleErrorCode(error.error_code);
+            });
+    }
+
+
+    function createGroup(event) {
+        event.preventDefault(); // 阻止表单的默认提交行为
+
+        const groupName = document.getElementById('name').value.trim(); // 获取群组名
+        const groupDescription = document.getElementById('description').value.trim(); // 获取群组描述
+        const isDepartment = document.getElementById('is_department').value; // 获取部门信息
+
+        // 这里添加创建群组的逻辑，你可以向服务器端发送请求来创建群组
+        const createGroupObject = {
+            group_name: groupName,
+            description: groupDescription,
+            is_department: isDepartment,
+            username: getUsername(),
+            session_id: getSessionId()
+        };
+        console.log(createGroupObject)
+
+        myFetchApi('/creat_a_group', 'POST', createGroupObject)
+            .then(data => {
+                // 如果群组创建成功，可以进行一些操作，例如重定向到其他页面或显示成功消息
+                alert('群组创建成功，即将跳转到群组页面');
+                window.location.href = `/groupchat/${groupName}`;
+            })
+            .catch(error => {
+                // 处理各种错误
+                myHandleErrorCode(error.error_code);
+            });
+    }
+</script>
+</body>
+</html>

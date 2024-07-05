@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置头像</title>
+    <style>
+        :root {
+            --light-blue: #D0EFFF;
+            --semitransparent-light-blue: rgba(208, 239, 255, 0.3);
+            --base-blue: #7AB8F5;
+            --deep-blue: #4285F4;
+            --darker-blue: #005AB5;
+            --pure-white: #FFFFFF;
+            --off-white: #F9FAFB;
+            --soft-pink: #FFB6C1;
+            --soft-green: #7FFFD4;
+            --light-grey: #E0E0E0;
+            --medium-grey: #9E9E9E;
+            --dark-grey: #616161;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--off-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .avatar-upload-container {
+            background-color: var(--pure-white);
+            border: 1px solid var(--light-grey);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .upload-label {
+            display: inline-block;
+            background-color: var(--deep-blue);
+            color: var(--pure-white);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .upload-label:hover {
+            background-color: var(--darker-blue);
+        }
+
+        .upload-btn {
+            background-color: var(--deep-blue);
+            color: var(--pure-white);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--darker-blue);
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border: 1px solid var(--medium-grey);
+            border-radius: 60px;
+            margin: 20px auto;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .upload-btn:disabled {
+            background-color: var(--soft-pink);
+            color: var(--off-white);
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+<div class="avatar-upload-container">
+    <label for="avatarInput" class="upload-label">
+        选择图片
+        <input type="file" id="avatarInput" accept="image/*" hidden>
+    </label>
+    <div class="avatar-preview" id="avatarPreview"></div>
+    <button class="upload-btn" id="uploadBtn" onclick="uploadAvatar()" disabled>上传头像</button>
+</div>
+<!--获取用户名-->
+<script src="../static/js/myUtil.js"></script>
+<script>
+    document.getElementById('avatarInput').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const uploadBtn = document.getElementById('uploadBtn');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.getElementById('avatarPreview');
+                preview.style.backgroundImage = `url('${e.target.result}')`;
+                uploadBtn.disabled = false; // 选择了图片，启用上传按钮
+            };
+            reader.readAsDataURL(file);
+        } else {
+            uploadBtn.disabled = true; // 没有选择图片，禁用上传按钮
+        }
+    });
+
+    function uploadAvatar() {
+        // 获取用户名和会话ID
+        const username = getUsername();
+        const session_id = getSessionId();
+        const url = '/upload_avatar';
+
+        // 构造 FormData 对象
+        const formData = new FormData();
+        const file = document.getElementById('avatarInput').files[0];
+        formData.append('file', file);
+        formData.append('username', username);
+        formData.append('session_id', session_id);
+
+        // 发送请求
+        fetch(url, {
+            method: 'POST',
+            body: formData, // 请求体
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('上传失败');
+            })
+            .then(data => {
+                console.log(data);
+                alert('上传成功');
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error);
+            });
+    }
+</script>
+</body>
+</html>

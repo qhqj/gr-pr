@@ -1,0 +1,172 @@
+:root {
+    --light-blue: #D0EFFF;
+    --semitransparent-light-blue: rgba(208, 239, 255, 0.3);
+    --base-blue: #7AB8F5;
+    --deep-blue: #4285F4;
+    --darker-blue: #005AB5;
+    --pure-white: #FFFFFF;
+    --off-white: #F9FAFB;
+    --soft-pink: #FFB6C1;
+    --soft-green: #7FFFD4;
+    --deep-green: #00FF00;
+    --draker-green: #008000;
+    --semitransparent-black: rgba(0, 0, 0, 0.1);
+    --black: #000000;
+    --light-grey: #E0E0E0;
+    --medium-grey: #9E9E9E;
+    --dark-grey: #616161;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--pure-white);
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+#liveWindow {
+    background: var(--dark-grey);
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 400px;
+    height: 300px;
+    border: 1px solid var(--light-grey);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.message {
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    color: var(--off-white);
+}
+
+#liveWindow .message {
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    color: var(--off-white);
+}
+
+label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+input[type="number"] {
+    width: 60px;
+    font-size: 16px;
+    padding: 5px;
+}
+
+button {
+    font-size: 16px;
+    padding: 8px 16px;
+    background-color: var(--base-blue);
+    color: var(--pure-white);
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--deep-blue);
+}
+
+button:disabled {
+    background-color: var(--light-grey);
+    cursor: not-allowed;
+}
+
+.stream-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 720px;
+    border: 1px solid var(--light-grey);
+    background-color: var(--black);
+    overflow: hidden;
+}
+
+#liveStream img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.textOutput {
+    width: 60%;
+    margin: 20px auto 0;
+    padding: 10px;
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--light-grey);
+    text-align: left;
+    background-color: var(--pure-white);
+    color: var(--black);
+    background: var(--light-blue);
+}
+
+.textOutput h2 {
+    margin-bottom: 10px;
+    font-size: 22px;
+    color: var(--black);
+    text-align: center;
+}
+
+.textOutput p {
+    margin: 5px 0;
+    line-height: 1.5;
+    font-size: 14px;
+    color: var(--black);
+    text-align: left;
+}
+
+/* textContent 样式 */
+.textOutput #textContent {
+    margin-bottom: 10px;
+}
+
+/* checkbox-container 样式 */
+.textOutput .checkbox-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.settings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings select, input {
+    font-size: 16px;
+    margin: 0 10px;
+}

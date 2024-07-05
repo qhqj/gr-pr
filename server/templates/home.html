@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>HOME</title>
+    <link rel="stylesheet" href="../static/css/home.css">
+</head>
+<body>
+
+<h1>欢迎回来！</h1>
+<p id="username"></p>
+
+<div class="actions">
+    <button id="chatPage">聊天页面</button>
+    <button id="manageFriends">管理好友</button>
+    <button id="createGroup">创建群聊</button>
+    <button id="manageGroups">管理群组</button>
+    <button id="setAvatar">设置头像</button>
+    <button id="startLive">发起直播</button>
+    <button id="live">观看直播</button>
+</div>
+
+<script src="../static/js/myUtil.js"></script>
+
+<script>
+    const addClickListener = (id, url) => {
+        document.getElementById(id).addEventListener('click', () => {
+            window.location.href = url;
+        });
+    };
+
+    addClickListener('chatPage', '/chat');
+    addClickListener('manageFriends', '/friend_management');
+    addClickListener('manageGroups', '/group_management');
+    addClickListener('setAvatar', '/avatar_setting');
+    addClickListener('createGroup', '/create_group');
+    addClickListener('startLive', '/start_live');
+    addClickListener('live', '/live');
+    updateElementContentById('username', getUsername());
+
+    refreshLoginStatus();
+    // 每5分钟调用一次
+    setInterval(refreshLoginStatus, 300000);
+</script>
+</body>
+</html>

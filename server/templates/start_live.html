@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>开始直播</title>
+    <link rel="stylesheet" href="../static/css/live.css">
+</head>
+
+
+<body>
+<div class="container">
+    <h1>开始直播</h1>
+    <div class="settings">
+        <select id="interval">
+            <option value="10000">10秒</option>
+            <option value="5000">5秒</option>
+            <option value="2000">2秒</option>
+        </select>
+        <select id="selectAudio">
+            <option value="inside">系统内放</option>
+            <option value="outside">麦克风</option>
+        </select>
+        <input type="checkbox" id="isRemove" checked>
+        <label for="isRemove">是否保留文件</label>
+
+
+    </div>
+    <div class="buttons">
+        <button class="toggleBtn">开始录制</button>
+    </div>
+    <!-- 预览框 -->
+        <div id="liveWindow">
+            <div class="message" id="waitingMessage">等待直播开始...</div>
+            <video id="previewVideo" autoplay muted style="width: 100%; height: auto; display: none;"></video>
+        </div>
+
+    <div id="textOutput" class="textOutput">
+        <h2>这里是生成的文本：</h2>
+        <!-- 用于显示服务器返回的文本 -->
+        <div id="textContent"></div>
+
+        <!-- 右下角的勾选框 -->
+        <div class="checkbox-container">
+            <input type="checkbox" id="showTimeCheckbox">
+            <label for="showTimeCheckbox">显示时间</label>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="../static/js/myUtil.js"></script>
+<script src="../static/js/socket.io.min.js"></script>
+<script src="../static/js/start_live.js"></script>
+</body>
+
+</html>

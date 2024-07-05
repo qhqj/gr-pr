@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件不存在</title>
+    <style>
+        :root {
+            --light-blue: #D0EFFF;
+            --deep-blue: #4285F4;
+            --off-white: #F9FAFB;
+            --dark-grey: #616161;
+            --soft-pink: #FFB6C1;
+            --darker-blue: #005AB5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark-grey);
+            background-color: var(--off-white);
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .message {
+            background-color: var(--soft-pink);
+            color: var(--deep-blue);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: auto;
+        }
+
+        .message p {
+            margin: 10px 0;
+        }
+
+        .message a {
+            color: var(--deep-blue);
+            text-decoration: none;
+        }
+
+        .message a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="message">
+        <h1>抱歉，您请求的文件不存在。</h1>
+        <p>请检查链接是否正确，或者联系网站管理员。</p>
+    </div>
+</body>
+</html>

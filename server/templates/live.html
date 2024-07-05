@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>直播观看页面</title>
+    <link rel="stylesheet" href="../static/css/live.css">
+</head>
+
+<body>
+<div class="container">
+    <h1>直播观看页面</h1>
+    <div class="stream-container" id="liveStream">
+        <div class="message" id="waitingMessage">等待直播开始...</div>
+        <video id="liveVideo" autoplay controls style="width: 100%; height: auto; display: none;"></video>
+    </div>
+</div>
+
+<script src="../static/js/socket.io.min.js"></script>
+<script>
+    const socket = io('/start_live');
+    const videoElement = document.getElementById('liveVideo');
+    const waitingMessage = document.getElementById('waitingMessage');
+
+    let mediaSource = new MediaSource();
+    let sourceBuffer;
+    let queue = [];
+
+    // 定时器：每 10 秒调用一次 getLiveStatus() 函数
+    setInterval(() => {
+        getLiveStatus();
+    }, 10000); // 10 秒
+
+
+    function getLiveStatus() {
+        socket.emit('is_live', 'check', (response) => {
+            if (response) {
+                console.log("有正在进行的直播");
+                // 如果有直播正在进行，继续播放视频
+                waitingMessage.style.display = 'none';
+                videoElement.style.display = 'block';
+            } else {
+                console.log("没有正在进行的直播");
+                // 如果没有直播正在进行，暂停视频播放
+                waitingMessage.style.display = 'block';
+                videoElement.style.display = 'none';
+                videoElement.pause();
+            }
+        });
+    }
+
+    videoElement.src = window.URL.createObjectURL(mediaSource);
+
+    mediaSource.addEventListener('sourceopen', function () {
+        sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
+        sourceBuffer.mode = 'sequence';
+        sourceBuffer.addEventListener('updateend', function () {
+            if (queue.length > 0 && !sourceBuffer.updating) {
+                sourceBuffer.appendBuffer(queue.shift());
+            }
+        });
+    });
+
+    socket.on('live_data', function (data) {
+        let arrayBuffer = new Uint8Array(data).buffer;
+        try {
+            if (videoElement.error) {
+                console.error("Video element error:", videoElement.error);
+                // 可考虑重置MediaSource或其他恢复措施
+            }
+            if (sourceBuffer && !sourceBuffer.updating && queue.length === 0) {
+                sourceBuffer.appendBuffer(arrayBuffer);
+            } else {
+                queue.push(arrayBuffer);
+            }
+        } catch (error) {
+            console.error("Error appending buffer: ", error);
+            // 可以在这里添加重试逻辑或重新初始化MediaSource
+        }
+
+        if (waitingMessage.style.display !== 'none') {
+            waitingMessage.style.display = 'none';
+            videoElement.style.display = 'block';
+        }
+    });
+
+</script>
+</body>
+
+</html>

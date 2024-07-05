@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天界面</title>
+    <link rel="stylesheet" href="../../static/css/style-chat.css">
+</head>
+
+<body>
+<div class="container">
+
+    <div class="sidebar" id="sidebar">
+        <div class="link-to-home">
+            <a href="/home">
+                <h2>主页</h2>
+            </a>
+        </div>
+        <div class="sidebar-header">
+            <h2>联系人</h2>
+        </div>
+        <div class="sidebar-content">
+            <!-- 侧边栏联系人列表 -->
+            <div class="group">
+                <h3 class="group-header">好友</h3>
+                <ul class="contacts">
+                    <!-- 填充具体联系人 -->
+                </ul>
+            </div>
+            <div class="group">
+                <h3 class="group-header">群组</h3>
+                <ul class="groups">
+                    <!-- 填充具体群组 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="chat">
+        <div class="chat-header">
+            <h2 id="friend">聊天对象</h2>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- 聊天消息 -->
+        </div>
+        <div class="chat-upload">
+            <input type="file" id="upload-image" accept="image/*" style="display: none;">
+            <label for="upload-image">上传图片</label>
+            <input type="file" id="upload-file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.7z,.rar"
+                   style="display: none;">
+            <label for="upload-file">上传文件</label>
+        </div>
+        <div class="chat-input">
+            <div class="input-container">
+                <textarea placeholder="输入消息..." id="message-input"></textarea>
+                <button id="send-button">发送</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--获取用户名-->
+<script src="../../static/js/myUtil.js"></script>
+<script src="../../static/js/myChat.js"></script>
+<!--显示消息-->
+<script src="../../static/js/dragsidebar.js"></script>
+
+<script>
+    //更改friend
+    // 获取当前页面的URL
+    showUserList();
+
+    const currentURL = window.location.href;
+    const urlParts = currentURL.split('/');
+    const lastPart = urlParts[urlParts.length - 1];
+    if (urlParts[urlParts.length - 2] !== "chat") {
+        window.location.href = "/chat";
+    }
+    document.getElementById("friend").innerText = "与 " + lastPart + " 的聊天";
+
+    //检测当前聊天对象是否合法
+    if (lastPart === getUsername()) {
+        alert("不能和自己聊天！");
+        window.location.href = "/chat";
+    }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const chatData = localStorage.getItem('key');
+        if (!chatData) {
+            alert(`当前页面聊天数据未通过加密`);
+        }
+        getMessage("user", lastPart);
+
+
+        const sendButton = document.getElementById('send-button');
+        const messageInput = document.getElementById('message-input');
+        // sendButton.addEventListener('click', () => {
+        //     sendMessage(messageInput.value, "user", lastPart);
+        //     messageInput.value = "";
+        // });
+        sendButton.addEventListener('click', async () => {
+            try {
+                await sendMessage(messageInput.value, "user", lastPart);
+                messageInput.value = "";
+            } catch (error) {
+                console.error("Failed to send message:", error);
+            }
+        });
+        // 绑定图片上传
+        document.getElementById('upload-image').addEventListener('change', function (event) {
+            uploadFile(event.target.files[0], 'picture', 'user', lastPart);
+        });
+
+        // 绑定文件上传
+        document.getElementById('upload-file').addEventListener('change', function (event) {
+            uploadFile(event.target.files[0], 'file', 'user', lastPart);
+        });
+    });
+
+    const encryptionKey = localStorage.getItem('key');
+
+    const is_encryption_now = encryptionKey !== "undefined";
+    if (!is_encryption_now) {
+        alert("未加密!");
+    }
+
+
+    //每隔一段时间刷新消息
+    setInterval(() => {
+        getMessage("user", lastPart);
+    }, 5000);
+
+
+</script>
+</body>
+</html>

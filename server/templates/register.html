@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+<div class="form-container">
+    <form method="POST" onsubmit="return submitForm()">
+        <h2>注册</h2>
+
+        <input type="text" placeholder="用户名" name="username" id="username" required>
+        <input type="password" placeholder="密码，8-16位" name="password" id="passwordInput" required
+               data-password="显示密码">
+        <div class="checkPasswordStrength">
+            <div id="passwordStrength">请设置密码</div>
+        </div>
+        <input type="password" placeholder="确认密码" name="confirm_password" id="confirm_password" required>
+        <input type="tel" placeholder="手机号" name="phone" id="phone" required>
+        <input type="text" placeholder="邀请码（必填）" name="invite_code" id="invite_code">
+
+        <button type="submit">注册</button>
+
+        <p>已有账号？<a href="login">登录</a></p>
+    </form>
+</div>
+<script src="../static/js/myUtil.js"></script>
+
+
+<script>
+    // 切换密码的显示状态
+    togglePasswordVisibility('passwordInput');
+    togglePasswordVisibility('confirm_password');
+
+    // 检查密码强度并更新显示
+    function checkPasswordStrength(password) {
+        const passwordStrength = document.getElementById('passwordStrength');
+        const weakPattern = /^(?=.*[a-zA-Z])|(?=.*\d)[a-zA-Z\d]{8,16}$/;
+        const mediumPattern = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
+        const strongPattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*\W)[a-zA-Z\d\W]{8,16}$/;
+
+        if (password.length === 0) {
+            passwordStrength.textContent = '请设置密码';
+        } else if (password.length < 8 || password.length > 16) {
+            passwordStrength.textContent = '密码长度应为 8-16 位';
+            passwordStrength.style.backgroundColor = '#FFFFFF'
+        } else if (strongPattern.test(password)) {
+            passwordStrength.textContent = '强';
+            passwordStrength.style.backgroundColor = '#82E0AA'
+        } else if (mediumPattern.test(password)) {
+            passwordStrength.textContent = '中';
+            passwordStrength.style.backgroundColor = '#F1C40F'
+        } else if (weakPattern.test(password)) {
+            passwordStrength.textContent = '弱';
+            passwordStrength.style.backgroundColor = '#FFC0CB'
+        } else {
+            passwordStrength.textContent = '不合格';
+            passwordStrength.style.backgroundColor = '#E74C3C'
+        }
+    }
+
+    document.getElementById('passwordInput').addEventListener('input', (event) => {
+        checkPasswordStrength(event.target.value);
+    });
+
+    // 检查表单是否符合要求
+    function checkForm() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('passwordInput').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const phone = document.getElementById('phone').value;
+        const inviteCode = document.getElementById('invite_code').value;
+        // 确保所有字段都有值
+        if (!username || !password || !confirmPassword || !phone || !inviteCode) {
+            alert('请填写完整的注册信息');
+            return false;
+        }
+        if (password.length < 8 || password.length > 16) {
+            alert('密码长度应为 8-16 位');
+            return false;
+        }
+        if (password !== confirmPassword) {
+            alert('两次输入的密码不一致');
+            return false;
+        }
+        return true;
+    }
+
+
+    function submitForm() {
+        if (!checkForm()) {
+            return false;
+        }
+        const formData = {
+            username: document.getElementById('username').value,
+            password: document.getElementById('passwordInput').value,
+            confirm_password: document.getElementById('confirm_password').value,
+            phone: document.getElementById('phone').value,
+            invite_code: document.getElementById('invite_code').value,
+        };
+        myFetchApi('/register', 'POST', formData)
+            .then(data => {
+                // 处理成功响应
+                console.log('注册成功:', data);
+                // 弹出提示框
+                const modal = document.createElement('div');
+                modal.style.position = 'fixed';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.padding = '20px';
+                modal.style.backgroundColor = '#FFFFFF';
+                modal.style.border = '1px solid #000';
+                modal.style.zIndex = '9999';
+                modal.innerHTML = `
+                <p>注册成功！</p>
+                <p>即将跳转到登录页面...</p>
+                <p id="countdown">3</p>
+            `;
+                document.body.appendChild(modal);
+                // 倒计时跳转
+                let countdown = 3;
+                const countdownElement = document.getElementById('countdown');
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        window.location.href = '/login'; // 跳转到登录页面
+                    }
+                }, 1000);
+            })
+            .catch(error => {
+                console.error('发生错误:', error);
+                myHandleErrorCode(error.errorCode);
+            });
+        return false;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+
+:root {
+    --light-blue: #D0EFFF;
+    --semitransparent-light-blue: rgba(208, 239, 255, 0.3);
+    --base-blue: #7AB8F5;
+    --deep-blue: #4285F4;
+    --darker-blue: #005AB5;
+    --pure-white: #FFFFFF;
+    --off-white: #F9FAFB;
+    --soft-pink: #FFB6C1;
+    --soft-green: #7FFFD4;
+    --semitransparent-black: rgba(0, 0, 0, 0.1);
+    --light-grey: #E0E0E0;
+    --medium-grey: #9E9E9E;
+    --dark-grey: #616161;
+    --deep-green: #00FF00;
+    --draker-green: #008000;
+    --black: #000000;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    justify-content: center; /* 在主轴上水平居中对齐 */
+    background-color: var(--off-white);
+}
+
+#container {
+    width: 80%; /* 设置内容宽度 */
+    display: flex;
+    height: 80%;
+    justify-content: center; /* 在主轴上水平居中对齐 */
+}
+
+.container {
+    width: 60%;
+    background-color: var(--semitransparent-light-blue);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.sidebar {
+    width: 20%;
+    background-color: var(--light-blue);
+    overflow-y: auto;
+}
+
+#management-panel {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: var(--pure-white);
+    overflow-y: scroll; /* 垂直滚动 */
+    overflow-x: hidden; /* 水平滚动隐藏 */
+}
+
+#management-panel::-webkit-scrollbar {
+    display: none; /* 隐藏滚动条 */
+}
+
+
+.hidden {
+    display: none;
+}
+
+#group-list div {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+#group-list div:hover {
+    background-color: var(--semitransparent-light-blue);
+}
+
+#invite-btn {
+    background-color: var(--base-blue);
+    color: var(--pure-white);
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#invite-btn:hover {
+    background-color: var(--deep-blue);
+}
+
+/* 输入和按钮样式 */
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    color: var(--dark-grey);
+    margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--light-grey);
+    border-radius: 5px;
+}
+
+.button {
+    background-color: var(--base-blue);
+    color: var(--pure-white);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: var(--deep-blue);
+}
+
+.button:disabled {
+    background-color: var(--soft-pink);
+    color: var(--medium-grey);
+    cursor: not-allowed;
+    /* 设置禁用状态下的鼠标样式 */
+}
+
+
+/* 提示样式 */
+#select-group-prompt {
+    text-align: center;
+    padding: 50px;
+    color: var(--medium-grey);
+}
+
+/* 成员列表和搜索结果样式 */
+#member-list li,
+#search-results div {
+    padding: 10px;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+#member-list li:last-child,
+#search-results div:last-child {
+    border-bottom: none;
+}
+
+
+.invite-button:disabled {
+    background-color: var(--medium-grey);
+}
+
+/* 侧边栏群组列表样式 */
+#group-list > div {
+    padding: 10px;
+    border-bottom: 1px solid var(--semitransparent-black);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#group-list > div:hover {
+    background-color: var(--semitransparent-light-blue);
+}
+
+/* 搜索好友结果和好友请求列表的通用样式 */
+.friend-search-result, .friend-request-result {
+    background-color: var(--pure-white);
+    border: 1px solid var(--light-grey);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.friend-search-result p, .friend-request-result p {
+    margin: 5px 0;
+}
+
+.button-side {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-side button {
+    width: 20%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.delete-button-member, .invite-button {
+    background-color: var(--base-blue);
+    color: var(--pure-white);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 20%;
+
+}
+
+.delete-button-member:hover,
+.invite-button:hover {
+    background-color: var(--deep-blue);
+}
+
+.invite-button:disabled {
+    background-color: var(--soft-pink);
+    color: var(--medium-grey);
+    cursor: not-allowed;
+}
+
+
+/* 添加好友按钮样式 */
+.add-friend-button {
+    background-color: var(--base-blue);
+    color: var(--pure-white);
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-friend-button:hover {
+    background-color: var(--deep-blue);
+}
+
+.add-friend-button:disabled {
+    background-color: var(--soft-pink);
+    color: var(--medium-grey);
+    cursor: not-allowed;
+}
+
+.delete-button, .add-button {
+    background-color: var(--base-blue);
+    color: var(--soft-pink);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-button, .add-button:hover {
+    background-color: var(--soft-pink);
+    color: var(--pure-white);
+}
+
+#search-btn {
+    /*上间距*/
+    margin-top: 10px;
+    color: var(--pure-white);
+    background-color: var(--base-blue);
+}
+
+#search-btn:hover {
+    background-color: var(--deep-blue);
+}
+
+/* 好友请求列表特有样式 */
+.friend-request-list {
+    margin-top: 20px;
+}
+
+/* 搜索输入框和按钮的布局调整 */
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input[type="text"],
+.input-group textarea {
+    width: 90%; /* 设置宽度为100% */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--light-grey);
+    border-radius: 5px;
+}
+
+.input-group textarea {
+    height: 100px; /* 设置固定高度 */
+    overflow-y: scroll; /* 显示垂直滚动条 */
+}
+
+/* 隐藏滚动条 */
+.input-group textarea::-webkit-scrollbar {
+    display: none; /* 隐藏滚动条 */
+}
+
+
+/* 群组描述文本域样式 */
+.input-group textarea {
+    resize: vertical; /* 设置文本域垂直方向可以调整大小 */
+}
+
+
+/* 调整搜索按钮的样式，使其与输入框对齐 */
+#searchButton {
+    padding: 10px 15px;
+}
+
+/* 未找到用户的提示样式 */
+.friend-search-result p, .friend-request-result p {
+    color: var(--dark-grey);
+}
